@@ -7,30 +7,22 @@ import {
 import React, { FC, useEffect, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import socketIO from "socket.io-client";
-import { format } from "timeago.js/lib/format";
+import { format } from "timeago.js";
+
 const ENDPOINT = process.env.NEXT_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 type Props = {
   open?: boolean;
-  setOpen?: any;
+  setOpen?: (open: boolean) => void;
 };
 
-const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
+const DashboardHeader: FC<Props> = ({ open = false, setOpen }) => {
   const { data, refetch } = useGetAllNotificationsQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  const [updateNotificationStatus, { isSuccess }] =
-    useUpdateNotificationStatusMutation();
+  const [updateNotificationStatus] = useUpdateNotificationStatusMutation();
   const [notifications, setNotifications] = useState<any>([]);
-  const [audio] = useState(
-    new Audio(
-      "https://res.cloudinary.com/damk25wo5/video/upload/v1693465789/notification_vcetjn.mp3"
-    )
-  );
-  const playNotificationSound = () => {
-    audio.play();
-  };
 
   useEffect(() => {
     if (data) {
@@ -38,17 +30,15 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
         data.notifications.filter((item: any) => item.status === "unread")
       );
     }
-    if (isSuccess) {
-      refetch();
-    }
-    audio.load();
-  }, [data, isSuccess]);
+  }, [data]);
 
   useEffect(() => {
-    socketId.on("newNotification", (data) => {
-      playNotificationSound();
+    socketId.on("newNotification", () => {
       refetch();
     });
+    return () => {
+      socketId.off("newNotification");
+    };
   }, []);
 
   const handleNotificationStatusChange = async (id: string) => {
@@ -60,7 +50,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
       <Themeswitcher />
       <div
         className="relative cursor-pointer m-2"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen && setOpen(!open)}
       >
         <IoMdNotificationsOutline className="text-2xl cursor-pointer dark:text-white text-black" />
 
@@ -76,12 +66,16 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
           </h5>
           {notifications &&
             notifications.map((item: any, index: number) => (
-              <div className="dark:bg-[#2d3a4ea1] bg-[#00000013] font-Poppins border-b dark:border-b-[#ffffff47] border-b-[#0000000f]">
+              <div
+                key={index}
+                className="dark:bg-[#2d3a4ea1] bg-[#00000013] font-Poppins border-b dark:border-b-[#ffffff47] border-b-[#0000000f]"
+              >
                 <div className="w-full flex items-center justify-between p-2">
-                  <p className="text-black dark:text-white">
-                    {item.title}
-                  </p>
-                  <p className="dark:text-white text-black cursor-pointer">
+                  <p className="text-black dark:text-white">{item.title}</p>
+                  <p
+                    className="dark:text-white text-black cursor-pointer"
+                    onClick={() => handleNotificationStatusChange(item.id)}
+                  >
                     Mark as read
                   </p>
                 </div>
@@ -89,7 +83,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
                   {item.message}
                 </p>
                 <p className="p-2 text-black dark:text-white text-[14px]">
-                  {format(item.createdAt)}
+                  {format(new Date(item.createdAt))}
                 </p>
               </div>
             ))}
@@ -98,4 +92,5 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     </div>
   );
 };
+
 export default DashboardHeader;

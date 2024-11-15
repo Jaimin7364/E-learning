@@ -15,7 +15,7 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
   useEffect(() => {
     // Here in line 17 use S3 cloudhub API url
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}getVdoChipherOTP`, {
+      .post("http://localhost:8000/api/v1/getVdoCipherOTP", {
         videoID: videoUrl,
       })
       .then((res) => {
@@ -27,7 +27,7 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
     <div style={{ paddingTop: "41%", position: "relative" }}>
       {videoData.otp && videoData.playbackInfo !== "" && (
         <iframe
-          src={`https://player.vdocipher.com/v2/?otp=${videoData?.otp}&playbackInfo=${videoData.playbackInfo}&player=zlc1WCNFg5hb9UQa`}//Add S3Cloudhub url
+          src={`https://player.vdocipher.com/v2/?otp=${videoData?.otp}&playbackInfo=${videoData.playbackInfo}&player=FLQnpXUCN23pvgSq`}//Add S3Cloudhub url
           style={{
             position: "absolute",
             top: 0,
@@ -44,5 +44,3 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
   );
 };
 export default CoursePlayer;
-
-

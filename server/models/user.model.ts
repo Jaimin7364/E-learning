@@ -57,7 +57,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     courses: [
       {

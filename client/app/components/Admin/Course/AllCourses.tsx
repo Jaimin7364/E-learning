@@ -11,7 +11,7 @@ import {
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
 import { styles } from "@/app/styles/style";
-import { error } from "console";
+// import { error } from "console";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
@@ -41,7 +41,7 @@ const AllCourses = (props: Props) => {
       renderCell: (params: any) => {
         return (
           <>
-            <Link href={`/admin/edit-course/${params.roew.id}`}>
+            <Link href={`/admin/edit-course/${params.row.id}`}>
               <FaEdit className="dark:text-white text-black" size={20} />
             </Link>
           </>
@@ -91,11 +91,11 @@ const AllCourses = (props: Props) => {
       setOpen(false);
       toast.success("Course Deleted Successfully");
     }
-    if (error) {
-      const errorMessage = error as any;
+    if (errorDelete) {
+      const errorMessage = errorDelete as any;
       toast.error(errorMessage.data.message);
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, errorDelete]);
 
   const handleDelete = async () => {
     const id = courseId;
@@ -205,3 +205,5 @@ const AllCourses = (props: Props) => {
     </div>
   );
 };
+
+export { AllCourses };

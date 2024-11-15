@@ -1,5 +1,5 @@
 import express from "express";
-import { editCourse, getSingleCourse, uploadCourse, getAllCourses, getCourseByUser, addQuestion, addAnwser, getAllCoursesWithoutPurchasing, deleteCourse } from "../controllers/course.controller";
+import { editCourse, getSingleCourse, uploadCourse, getAllCourses, getCourseByUser, addQuestion, addAnwser, getAllCoursesWithoutPurchasing, deleteCourse, generateVideoUrl } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
 import { updateAccessToken } from "../controllers/user.controller";
 const courseRouter = express.Router();
@@ -19,6 +19,8 @@ courseRouter.put("/add-question",isAuthenticated as any, addQuestion as any);
 courseRouter.put("/add-answer",isAuthenticated as any, addAnwser as any);
 
 courseRouter.put("/get-courses", isAuthenticated as any, authorizeRoles("admin") as express.RequestHandler, getAllCourses as any);
+
+courseRouter.post("/getVdoCipherOTP", generateVideoUrl as any);
 
 courseRouter.delete("/delete-course/:id", isAuthenticated as any, authorizeRoles("admin") as express.RequestHandler, deleteCourse as any);
 

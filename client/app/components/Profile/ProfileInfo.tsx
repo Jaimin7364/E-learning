@@ -17,36 +17,50 @@ type Props = {
 
 const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   const [name, setName] = useState(user && user.name);
-  const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
-  const [editProfile, { isSuccess: success, error: updateError }] = useEditProfileMutation();
+  const [updateAvatar, { isSuccess: avatarSuccess, error: avatarError }] = useUpdateAvatarMutation<any>();
+  const [editProfile, { isSuccess: profileSuccess, error: profileError }] = useEditProfileMutation<any>();
   const [loadUser, setLoadUser] = useState(false);
   const {} = useLoadUserQuery(undefined, { skip: loadUser ? false : true });
 
-  const imageHandler = async (e: any) => {
-    const file = e.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      if (fileReader.readyState === 2) {
-        const avatar = fileReader.result;
-        updateAvatar({ avatar });
-      }
-    };
-    fileReader.readAsDataURL(file);
+  const imageHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await updateAvatar(formData).unwrap();
+      console.log("Avatar updated successfully:", response);
+      toast.success("Avatar uploaded successfully!");
+    } catch (error: any) {
+      console.error("Error uploading avatar:", error);
+      toast.error(
+        error?.data?.message || "Failed to upload avatar. Check console for details."
+      );
+    }
   };
 
   useEffect(() => {
-    if (isSuccess || success) {
+    if (avatarSuccess || profileSuccess) {
       setLoadUser(false);
+      toast.success("Profile updated successfully!");
     }
-    if (error || updateError) {
-      console.log(error);
-    }
-    if(success){
-      toast.success("Profile updated Successfully!");
-    }
-  }, [isSuccess, error, updateError, success]);
 
-  const handleSubmit = async (e: any) => {
+    if (avatarError || profileError) {
+      const errorMessage =
+        (avatarError && 'data' in avatarError && avatarError.data?.message) ||
+        (profileError && 'data' in profileError && profileError.data?.message) ||
+        "An unknown error occurred.";
+      console.error("Error updating profile:", avatarError || profileError);
+      toast.error(errorMessage);
+    }
+  }, [avatarSuccess, profileSuccess, avatarError, profileError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name !== null) {
       await editProfile({ name: name });
@@ -59,20 +73,19 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         <div className="relative">
           <Image
             src={user.avatar || avatar ? user.avatar.url || avatar : avatarIcon}
-            alt=""
+            alt="User Avatar"
             width={120}
             height={120}
             className="w-[120px] h-[120px] cursor-pointer border-[3px] border-[#37a39a] rounded-full"
           />
           <input
             type="file"
-            name=""
+            name="avatar"
             id="avatar"
             className="hidden"
             onChange={imageHandler}
-            accept="image/png,image/jpg, image/webp"
+            accept="image/png, image/jpg, image/webp"
           />
-
           <label htmlFor="avatar">
             <div className="w-[30px] h-[30px] bg-slate-900 rounded-full absolute bottom-2 right-2 flex items-center justify-center cursor-pointer">
               <AiOutlineCamera size={20} className="z-1" />

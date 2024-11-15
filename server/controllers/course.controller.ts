@@ -11,6 +11,7 @@ import path from "path";
 import sendMail from "../utils/sendMail"; // Adjust the path as necessary
 import NotificationModel from "../models/notificaionModel"; // Adjust the path as necessary
 import { getAllCoursesService } from "../services/course.service"; // Adjust the path as necessary
+import axios from "axios";
 
 // Upload course
 export const uploadCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -310,3 +311,27 @@ export const deleteCourse = CatchAsyncError(
       }
     }
   );
+
+  //generate video url
+
+  export const generateVideoUrl = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+    try {
+       const { videoId } = req.body;
+       const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+           {ttl : 300},
+            {
+            headers: {
+                Accept : 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Apisecret ${process.env.VDOCIPHER_SECRET_KEY}`,
+        },
+    }
+       );
+       res.json(response.data);
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400));
+    }
+    }
+);

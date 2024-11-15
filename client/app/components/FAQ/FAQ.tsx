@@ -7,7 +7,7 @@ type Props = {};
 
 const FAQ = (props: Props) => {
   const { data } = useGetHeroDataQuery("FAQ", {});
-  const [activeQuestion, setActiveQuestion] = useState(null);
+  const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
 
   useEffect(() => {
@@ -16,13 +16,13 @@ const FAQ = (props: Props) => {
     }
   }, [data]);
 
-  const toggleQuestion = (id: any) => {
+  const toggleQuestion = (id: string) => {
     setActiveQuestion(activeQuestion === id ? null : id);
   };
 
   return (
     <div>
-      <div className="w- [90%] 800px:w- [80%] m-auto">
+      <div className="w-[90%] 800px:w-[80%] m-auto">
         <h1 className={`${styles.title} 800px:text-[40px]`}>
           Frequently Asked Questions
         </h1>
@@ -30,14 +30,14 @@ const FAQ = (props: Props) => {
           <dl className="space-y-8">
             {questions.map((q) => (
               <div
-                key={q.id}
+                key={q._id} // Ensure _id is unique
                 className={`${
-                  q._id != questions[0]?._id && "border-t"
+                  q._id !== questions[0]?._id && "border-t"
                 } border-gray-200 pt-6`}
               >
                 <dt className="text-lg">
                   <button
-                    className="flex items-start justify-between w-full text-left focus: outline-none"
+                    className="flex items-start justify-between w-full text-left focus:outline-none"
                     onClick={() => toggleQuestion(q._id)}
                   >
                     <span className="font-medium text-black dark:text-white">

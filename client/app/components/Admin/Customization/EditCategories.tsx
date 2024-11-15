@@ -19,6 +19,7 @@ const EditCategories = (props: Props) => {
     useEditLayoutMutation();
   const [categories, setCategories] = useState<any>([]);
 
+  // Effect to handle data and state updates
   useEffect(() => {
     if (data) {
       setCategories(data.layout.categories);
@@ -33,22 +34,25 @@ const EditCategories = (props: Props) => {
         toast.error(errorData?.data?.message);
       }
     }
-  }, [data, layoutSuccess, error]);
+  }, [data, layoutSuccess, error, refetch]); // Refetch function added to dependency
 
+  // Handler to update a category title
   const handleCategoriesAdd = (id: any, value: string) => {
     setCategories((prevCategory: any) =>
       prevCategory.map((i: any) => (i._id === id ? { ...i, title: value } : i))
     );
   };
 
+  // Handler for adding new category
   const newCategoriesHandler = () => {
     if (categories[categories.length - 1].title === "") {
-      toast.error("Category title cannot br empty");
+      toast.error("Category title cannot be empty");
     } else {
       setCategories((prevCategory: any) => [...prevCategory, { title: "" }]);
     }
   };
 
+  // Check if categories have changed
   const areCategoriesUnchanged = (
     originalCategories: any[],
     newCategories: any[]
@@ -56,10 +60,12 @@ const EditCategories = (props: Props) => {
     return JSON.stringify(originalCategories) === JSON.stringify(newCategories);
   };
 
+  // Check if any category title is empty
   const isAnyCategoryTitleEmpty = (categories: any[]) => {
     return categories.some((category) => category.title === "");
   };
 
+  // Handler for saving categories
   const editCategoriesHandler = async () => {
     if (
       !areCategoriesUnchanged(data.layout.categories, categories) &&
@@ -80,30 +86,28 @@ const EditCategories = (props: Props) => {
         <div className="mt-[120px] text-center">
           <h1 className={`${styles.title}`}>All Categories</h1>
           {categories &&
-            categories.map((item: any, index: number) => {
-              return (
-                <div className="p—3">
-                  <div className="flex items-center w-full justify-center">
-                    <input
-                      className={`${styles.input} !w [unset] !border-none !text- [20px]`}
-                      value={item.title}
-                      onChange={(e) =>
-                        handleCategoriesAdd(item._id, e.target.value)
-                      }
-                      placeholder="Enter category title..."
-                    />
-                    <AiOutlineDelete
-                      className="dark:text-white text-black text-[18px] cursor-pointer"
-                      onClick={() => {
-                        setCategories((prevCategory: any) =>
-                          prevCategory.filter((i: any) => i._id !== item._id)
-                        );
-                      }}
-                    />
-                  </div>
+            categories.map((item: any, index: number) => (
+              <div key={item._id} className="p-3">
+                <div className="flex items-center w-full justify-center">
+                  <input
+                    className={`${styles.input} !w-[unset] !border-none !text-[20px]`}
+                    value={item.title}
+                    onChange={(e) =>
+                      handleCategoriesAdd(item._id, e.target.value)
+                    }
+                    placeholder="Enter category title..."
+                  />
+                  <AiOutlineDelete
+                    className="dark:text-white text-black text-[18px] cursor-pointer"
+                    onClick={() => {
+                      setCategories((prevCategory: any) =>
+                        prevCategory.filter((i: any) => i._id !== item._id)
+                      );
+                    }}
+                  />
                 </div>
-              );
-            })}
+              </div>
+            ))}
           <br />
           <br />
           <div className="w-full flex justify-center">
@@ -113,17 +117,15 @@ const EditCategories = (props: Props) => {
             />
           </div>
           <div
-            className={`${
-              styles.button
-            } !w-[100px] !min-h-[40px] !h-[40px] dark:text-white text-black 
+            className={`${styles.button} !w-[100px] !min-h-[40px] !h-[40px] dark:text-white text-black 
               bg-[#cccccc34]
-  ${
-    areCategoriesUnchanged(data.layout.categories, categories) ||
-    isAnyCategoryTitleEmpty(categories)
-      ? "!cursor-not-allowed"
-      : "!cursor-pointer !bg-[#42d383]"
-  }
-  !rounded absolute bottom-12 right-12`}
+              ${
+                areCategoriesUnchanged(data.layout.categories, categories) ||
+                isAnyCategoryTitleEmpty(categories)
+                  ? "!cursor-not-allowed"
+                  : "!cursor-pointer !bg-[#42d383]"
+              }
+              !rounded absolute bottom-12 right-12`}
             onClick={
               areCategoriesUnchanged(data.layout.categories, categories) ||
               isAnyCategoryTitleEmpty(categories)
@@ -138,4 +140,5 @@ const EditCategories = (props: Props) => {
     </>
   );
 };
+
 export default EditCategories;

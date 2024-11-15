@@ -8,11 +8,11 @@ console.log("Router setup");
 
 userRouter.post("/registration", registrationUser as any);
 
-userRouter.post("/activate-user", activateUser as any);
+userRouter.post("/activation-user", activateUser as any);
 
 userRouter.post("/login", loginUser as any);
 
-userRouter.get("/logout",isAuthenticated as any ,authorizeRoles("admin"), logoutUser as any);
+userRouter.get("/logout",isAuthenticated as any, logoutUser as any);
 
 userRouter.get("/refresh", updateAccessToken as any);
 

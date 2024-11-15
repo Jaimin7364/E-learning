@@ -11,7 +11,7 @@ export const courseApi = apiSlice.injectEndpoints({
     }),
     getAllCourses: builder.query({
       query: () => ({
-        url: "get-admin-courses",
+        url:"http://localhost:8000/api/v1/" + "get-courses",
         method: "GET",
         credentials: "include" as const,
       }),
@@ -33,21 +33,21 @@ export const courseApi = apiSlice.injectEndpoints({
     }),
     getUsersAllCourses: builder.query({
       query: () => ({
-        url: "get-courses",
+        url:"http://localhost:8000/api/v1/get-courses",
         method: "GET",
         credentials: "include" as const,
       }),
     }),
     getCourseDetails: builder.query({
       query: (id) => ({
-        url: `get-course/${id}`,
+        url: `ttp://localhost:8000/api/v1/get-course/${id}`,
         method: "GET",
         credentials: "include" as const,
       }),
     }),
     getCourseContent: builder.query({
       query: (id: any) => ({
-        url: `get-course-content/${id}`,
+        url: `ttp://localhost:8000/api/v1/get-course-content/${id}`,
         method: "GET",
         credentials: "include" as const,
       }),

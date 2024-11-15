@@ -4,14 +4,14 @@ export const notificationsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllNotifications: builder.query({
       query: () => ({
-        url: "get-all-notifications",
+        url:"http://localhost:8000/api/v1/get-all-notificationss",
         method: "GET",
         credentials: "include" as const,
       }),
     }),
     updateNotificationStatus: builder.mutation({
       query: (id) => ({
-        url: `/update-notifications/${id}`,
+        url: `http://localhost:8000/api/v1/update-notifications/${id}`,
         method: "PUT",
         credentials: "include" as const,
       }),

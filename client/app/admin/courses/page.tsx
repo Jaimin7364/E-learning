@@ -4,7 +4,7 @@ import AdminProtected from "@/app/hooks/adminProtected";
 import Heading from "@/app/utils/Heading";
 import React from "react";
 import AdminSidebar from "../../components/Admin/sidebar/AdminSidebar";
-import AllCourses from "../../components/Admin/Course/AllCourses";
+import { AllCourses } from "../../components/Admin/Course/AllCourses";
 
 type Props = {};
 
